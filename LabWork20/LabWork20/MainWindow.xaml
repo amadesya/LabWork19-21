@@ -1,0 +1,30 @@
+﻿<Window x:Class="LabWork20.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SQL Query Executor" Height="600" Width="800" Background="#2E2E2E" Foreground="#FFFFFF">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <TextBox Name="txtQuery" HorizontalAlignment="Center" Margin="10,10,10,0" VerticalAlignment="Top" Height="30" Width="360" Background="#555555" Foreground="#FFFFFF"/>
+            <Button Content="Выполнить запрос" HorizontalAlignment="Center" VerticalAlignment="Top" Width="360" Height="30" Margin="10,50,10,0" Background="#555555" Foreground="#FFFFFF" Click="btnExecute_Click"/>
+            <Label Name="lblResult" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10,90,10,10" Height="30" Width="360" Foreground="#FFFFFF"/>
+        </Grid>
+        <Grid Grid.Row="1">
+            <TextBox Name="txtShowTable" HorizontalAlignment="Center" Margin="10,10,10,0" VerticalAlignment="Top" Height="30" Width="360" Background="#555555" Foreground="#FFFFFF"/>
+            <Button Content="Выполнить запрос таблицы" HorizontalAlignment="Center" VerticalAlignment="Top" Width="360" Height="30" Margin="10,50,10,0" Background="#555555" Foreground="#FFFFFF" Click="btnShowTable_Click"/>
+            <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible"
+                          Margin="10,90,10,10" Height="350">
+                <DataGrid Name="TableOutput" AutoGenerateColumns="True" 
+                          Background="White" Foreground="Black"
+                          HeadersVisibility="Column"
+                          GridLinesVisibility="All"/>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+    
+   
+</Window>

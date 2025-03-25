@@ -1,75 +1,123 @@
-﻿using System;
 using System.Data;
 using System.Windows;
-using MySqlX.XDevAPI.Relational;
+using System.Windows.Controls;
+using System.Windows.Media;
+using MySql.Data.MySqlClient;
 
 namespace LabWork20
 {
     public partial class MainWindow : Window
     {
-        private DatabaseAccessLayer _dal;
+        private DAL dal = new DAL(); 
 
         public MainWindow()
         {
             InitializeComponent();
-            _dal = new DatabaseAccessLayer("Server=localhost;Database=market;User ID=root;Password=root;Port=3306;");
         }
-
+        //Обработчик кнопки запроса
         private void btnExecute_Click(object sender, RoutedEventArgs e)
         {
             string query = txtQuery.Text.Trim();
 
-            if (string.IsNullOrEmpty(query))
+            if (query == "Введите SQL-запрос" || string.IsNullOrWhiteSpace(query))
             {
-                MessageBox.Show("Введите SQL-запрос!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Введите SQL-запрос.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             try
             {
-                object result = _dal.ExecuteScalarQuery(query);
-
-                if (result != null)
+                if (query.StartsWith("SELECT", StringComparison.OrdinalIgnoreCase))
                 {
-                    lblResult.Content = $"Результат: {result}";
+                    DataTable resultTable = dal.ExecuteQuery(query);
+
+                    if (resultTable.Rows.Count == 0)
+                    {
+                        lblResult.Content = "Результат: Нет данных";
+                        TableOutput.ItemsSource = null; 
+                    }
+                    else
+                    {
+                        lblResult.Content = "Результат: Загружено " + resultTable.Rows.Count + " записей";
+                        TableOutput.ItemsSource = resultTable.DefaultView; 
+                    }
                 }
                 else
                 {
-                    lblResult.Content = "Результат пуст.";
+                    object result = dal.ExecuteScalar(query);
+                    lblResult.Content = "Результат: " + (result != null ? result.ToString() : "Нет данных");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка выполнения запроса: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Ошибка выполнения запроса: " + ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
+        //Обработчик кнопки таблицы
         private void btnShowTable_Click(object sender, RoutedEventArgs e)
         {
-            string query = txtShowTable.Text.Trim();
+            string tableName = txtShowTable.Text.Trim();
 
-            if (string.IsNullOrEmpty(query))
+            if (tableName == "Введите название таблицы" || string.IsNullOrWhiteSpace(tableName))
             {
-                MessageBox.Show("Введите SQL-запрос!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Введите корректное название таблицы.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
+            if (tableName.Contains(" ") || tableName.Contains(";") || tableName.ToUpper().Contains("SELECT"))
+            {
+                MessageBox.Show("Введите только название таблицы, без SQL-запросов.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            tableName = tableName.Replace("market.", "").Trim();
+
+            string query = $"SELECT * FROM `{tableName}`"; 
+
             try
             {
-                DataTable table = _dal.ExecuteQuery(query);
+                DataTable resultTable = dal.ExecuteQuery(query);
 
-                if (table.Rows.Count > 0)
+                if (resultTable.Rows.Count == 0)
                 {
-                    TableOutput.ItemsSource = table.DefaultView; // Правильный вывод в DataGrid
+                    lblResult.Content = "Результат: Таблица пуста или не найдена";
+                    TableOutput.ItemsSource = null;
                 }
                 else
                 {
-                    MessageBox.Show("Результат пуст.", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                    lblResult.Content = $"Результат: Загружено {resultTable.Rows.Count} записей";
+                    TableOutput.ItemsSource = resultTable.DefaultView;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка выполнения запроса: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Ошибка загрузки таблицы: " + ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        //Тут просто оформлние
+        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            if (textBox != null && (textBox.Text == "Введите SQL-запрос" || textBox.Text == "Введите название таблицы"))
+            {
+                textBox.Text = "";
+                textBox.Foreground = new SolidColorBrush(Colors.White); 
+            }
+        }
+
+        private void TextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            if (textBox != null && string.IsNullOrWhiteSpace(textBox.Text))
+            {
+                if (textBox.Name == "txtQuery")
+                    textBox.Text = "Введите SQL-запрос";
+                else if (textBox.Name == "txtShowTable")
+                    textBox.Text = "Введите название таблицы";
+
+                textBox.Foreground = new SolidColorBrush(Colors.Gray); 
             }
         }
     }

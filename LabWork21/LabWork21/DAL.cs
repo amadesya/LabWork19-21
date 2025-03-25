@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 using System.Windows.Media.Media3D;
 using MySql.Data.MySqlClient;
 
@@ -59,7 +59,7 @@ namespace LabWork20
             }
         }
 
-        // Форма удаления записи
+        // Удаление записи
         public int ExecuteDeleteQuery(int bookId)
         {
             using (MySqlConnection connection = new MySqlConnection(_connectionString))
@@ -74,7 +74,7 @@ namespace LabWork20
                 }
             }
         }
-        // Форма добавления новой записи
+        // Добавление записи
         public int ExecuteInsertQuery(string title, int authorId, string genre, decimal price, double weight, int year, int pages)
         {
             using (MySqlConnection connection = new MySqlConnection(_connectionString))

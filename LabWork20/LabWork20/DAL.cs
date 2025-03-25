@@ -1,49 +1,51 @@
-﻿using System;
 using System.Data;
+using System.Windows;
 using MySql.Data.MySqlClient;
 
-namespace LabWork20
+public class DAL
 {
-    public class DatabaseAccessLayer
+    private string connectionString = "server=localhost;database=market;user=root;password=root;";
+
+    // Метод для выборки множества значений
+    public DataTable ExecuteQuery(string sqlQuery)
     {
-        private string _connectionString;
-
-        public DatabaseAccessLayer(string connectionString)
+        DataTable table = new DataTable();
+        using (MySqlConnection connection = new MySqlConnection(connectionString))
         {
-            _connectionString = connectionString;
-        }
-
-        // Метод получения DataTable
-        public DataTable ExecuteQuery(string query)
-        {
-            DataTable table = new DataTable();
-
-            using (MySqlConnection connection = new MySqlConnection(_connectionString))
+            try
             {
                 connection.Open();
-                using (MySqlCommand command = new MySqlCommand(query, connection))
-                {
-                    using (MySqlDataReader reader = command.ExecuteReader())
-                    {
-                        table.Load(reader);
-                    }
-                }
+                MySqlCommand command = new MySqlCommand(sqlQuery, connection);
+                MySqlDataAdapter adapter = new MySqlDataAdapter(command);
+                adapter.Fill(table);
+                MessageBox.Show($"Загружено {table.Rows.Count} записей", "Отладка", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-
-            return table;
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка: " + ex.Message, "Ошибка SQL", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
+        return table;
+    }
 
-        // Метод возврата одного значения
-        public object ExecuteScalarQuery(string query)
+
+    // Метод для выборки одного значения
+    public object ExecuteScalar(string sqlQuery)
+    {
+        object result = null;
+        using (MySqlConnection connection = new MySqlConnection(connectionString))
         {
-            using (MySqlConnection connection = new MySqlConnection(_connectionString))
+            try
             {
                 connection.Open();
-                using (MySqlCommand command = new MySqlCommand(query, connection))
-                {
-                    return command.ExecuteScalar();
-                }
+                MySqlCommand command = new MySqlCommand(sqlQuery, connection);
+                result = command.ExecuteScalar();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ошибка: " + ex.Message);
             }
         }
+        return result;
     }
 }

@@ -1,30 +1,43 @@
-﻿<Window x:Class="LabWork20.MainWindow"
+<Window x:Class="LabWork20.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="SQL Query Executor" Height="600" Width="800" Background="#2E2E2E" Foreground="#FFFFFF">
+        Title="SQL Query Executor" Height="600" Width="800" 
+        Background="#2E2E2E" Foreground="#FFFFFF">
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
-            <TextBox Name="txtQuery" HorizontalAlignment="Center" Margin="10,10,10,0" VerticalAlignment="Top" Height="30" Width="360" Background="#555555" Foreground="#FFFFFF"/>
-            <Button Content="Выполнить запрос" HorizontalAlignment="Center" VerticalAlignment="Top" Width="360" Height="30" Margin="10,50,10,0" Background="#555555" Foreground="#FFFFFF" Click="btnExecute_Click"/>
-            <Label Name="lblResult" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10,90,10,10" Height="30" Width="360" Foreground="#FFFFFF"/>
-        </Grid>
-        <Grid Grid.Row="1">
-            <TextBox Name="txtShowTable" HorizontalAlignment="Center" Margin="10,10,10,0" VerticalAlignment="Top" Height="30" Width="360" Background="#555555" Foreground="#FFFFFF"/>
-            <Button Content="Выполнить запрос таблицы" HorizontalAlignment="Center" VerticalAlignment="Top" Width="360" Height="30" Margin="10,50,10,0" Background="#555555" Foreground="#FFFFFF" Click="btnShowTable_Click"/>
+        <StackPanel Grid.Row="0" Margin="10">
+            <TextBox Name="txtQuery" Height="30" Background="#555555" Foreground="#FFFFFF"
+                 VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                 Text="Введите SQL-запрос" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus"/>
+
+            <Button Content="Выполнить запрос" Height="30" Margin="0,10,0,0"
+                    Background="#555555" Foreground="#FFFFFF"
+                    Click="btnExecute_Click"/>
+
+            <Label Name="lblResult" Height="30" Margin="0,10,0,0"
+                   Foreground="#FFFFFF"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Margin="10">
+            <TextBox Name="txtShowTable" Height="30" Background="#555555" Foreground="#FFFFFF"
+                VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                Text="Введите название таблицы" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus"/>
+
+            <Button Content="Показать таблицу" Height="30" Margin="0,10,0,10"
+                    Background="#555555" Foreground="#FFFFFF"
+                    Click="btnShowTable_Click"/>
+
             <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible"
-                          Margin="10,90,10,10" Height="350">
-                <DataGrid Name="TableOutput" AutoGenerateColumns="True" 
+                          Height="350">
+                <DataGrid Name="TableOutput" AutoGenerateColumns="True"
                           Background="White" Foreground="Black"
-                          HeadersVisibility="Column"
-                          GridLinesVisibility="All"/>
+                          HeadersVisibility="Column" GridLinesVisibility="All"/>
             </ScrollViewer>
-        </Grid>
+        </StackPanel>
     </Grid>
-    
-   
 </Window>

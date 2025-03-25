@@ -27,6 +27,7 @@ def connect_to_database():
             table_name = "book"
 
             # Ввести столбцы для вывода
+            
             cursor.execute(f"SELECT id, author_id, title, genre, price, weight, year_publication, pages FROM {table_name}")
             results = cursor.fetchall()
 
@@ -39,7 +40,7 @@ def connect_to_database():
             cursor.execute(f"SELECT title, price FROM {table_name} WHERE price < %s", (max_price,))
             filtered_books = cursor.fetchall()
 
-            print("\n🔍 Книги дешевле указанной цены:")
+            print("\nКниги дешевле указанной цены:")
             if filtered_books:
                 for book in filtered_books:
                     print(f"Название: {book[0]}, Цена: {book[1]} руб.")

@@ -1,27 +1,28 @@
-﻿using MySql.Data.MySqlClient;
-using System.Data;
+using MySql.Data.MySqlClient;
 
 namespace LabWork19
 {
-    public static class DAL
+    public class DAL
     {
-        public static string Server = "localhost";
-        public static string Port = "3306";
-        public static string Database = "market";
-        public static string UserID = "root";
-        public static string Password = "password";
+        private string Server = "localhost";
+        private string Database = "market";
+        private string Port = "3306";
 
-        public static string GetConnectionString()
+        public bool CheckDatabaseConnection(string username, string password)
         {
-            var stringBuilder = new MySqlConnectionStringBuilder
+            try
             {
-                Server = Server,
-                Port = uint.Parse(Port),
-                Database = Database,
-                UserID = UserID,
-                Password = Password
-            };
-            return stringBuilder.ConnectionString;
+                string connectionString = $"Server={Server};Database={Database};User ID={username};Password={password};Port={Port};";
+                using (MySqlConnection conn = new MySqlConnection(connectionString))
+                {
+                    conn.Open();
+                    return true; 
+                }
+            }
+            catch
+            {
+                return false; 
+            }
         }
     }
 }
